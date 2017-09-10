@@ -1,0 +1,6 @@
+framework module Pods_MechanicsAssistantCustomerTests {
+  umbrella header "Pods-MechanicsAssistantCustomerTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
