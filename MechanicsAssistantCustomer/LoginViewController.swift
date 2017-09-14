@@ -11,11 +11,17 @@ import Firebase
 
 public var currentPhone = ""
 
+//String extension to filter all non-digits from input
+extension String {
+    
+    var justDigits: String {
+        return components(separatedBy: CharacterSet.decimalDigits.inverted)
+            .joined()
+    }
+}
+
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
-    //outlets for UI
-    @IBOutlet weak var firstNameField: UITextField!
-    @IBOutlet weak var lastNameField: UITextField!
     @IBOutlet weak var phoneNumberField: UITextField!
     
     //setup array for Firebase data
@@ -37,6 +43,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         
+        //Check for phone entry errors
+        
+        //First, remove all non-numeric characters
+        let inputNumber = self.phoneNumberField.text?.justDigits
+        self.phoneNumberField.text = inputNumber
+        
+        //Then, check that phone number is ten digits
+        if phoneNumberField.text?.characters.count == 10 {
+        
+        
         //setup Firebase reference and load data
         let ref = Database.database().reference(withPath: "customers")
         
@@ -54,10 +70,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             for item in self.customers {
                 
                 let phoneNumber = item.key
-                let value = item.value as? NSDictionary
+                
                 
                 //if first name, last name, and phone number fields all match an item in customers...
-                if (value?["firstName"] as? String) == self.firstNameField.text && (value?["lastName"] as? String) == self.lastNameField.text && phoneNumber == self.phoneNumberField.text {
+                if phoneNumber == self.phoneNumberField.text {
                     
                     //...save ID to local storage, login.
                     currentPhone = phoneNumber
@@ -75,6 +91,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
         })
         
+        } else {
+            //Show phone number length alert
+            displayAlert("Invalid Phone Number", alertString: "Please enter a valid, ten-digit phone number.")
+        }
     }
     
     //function for displaying an alert controller

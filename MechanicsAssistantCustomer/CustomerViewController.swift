@@ -20,6 +20,7 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var percentLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var completionImage: UIImageView!
+    @IBOutlet weak var backgroundImage: UIImageView!
     
     //set empty variables
     var airFilterStatus = ""
@@ -45,6 +46,8 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
     var mainService3exists = false
     var mainService4exists = false
     
+    var totalNumberOfServices = 15
+    
     //array of item titles for cell labels
     var titles = ["Check Air Filter", "Check Battery Cables", "Check Battery Fluid", "Check Belts", "Check Brake Fluid Level", "Check Coolant", "Check Horn", "Check Hoses", "Check Lights", "Check Oil Level", "Check Power Steering Fluid", "Check Tire Pressure", "Check Transmission Fluid Level", "Check Tire Tread Depth", "Check Windshield Washer Fluid"]
     
@@ -56,6 +59,22 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        if currentBusinessColor == "0" {
+            self.backgroundImage.image = UIImage(named: "BackgroundBlue")
+        } else if currentBusinessColor == "1" {
+            self.backgroundImage.image = UIImage(named: "BackgroundRed")
+        } else if currentBusinessColor == "2" {
+            self.backgroundImage.image = UIImage(named: "BackgroundGreen")
+        } else if currentBusinessColor == "3" {
+            self.backgroundImage.image = UIImage(named: "BackgroundYellow")
+        } else if currentBusinessColor == "4" {
+            self.backgroundImage.image = UIImage(named: "BackgroundCyan")
+        } else if currentBusinessColor == "5" {
+            self.backgroundImage.image = UIImage(named: "BackgroundWhite")
+        } else {
+            self.backgroundImage.image = UIImage(named: "BackgroundBlue")
+        }
         
         // Hide the navigation bar on the this view controller
         self.navigationController?.setNavigationBarHidden(true, animated: true)
@@ -95,23 +114,28 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
             if(value?["mainService0"] != nil){
                 self.statuses.append(value?["mainService0"] as? String ?? "")
                 self.mainService0exists = true
+                self.totalNumberOfServices += 1
             }
             if(value?["mainService1"] != nil){
                 self.statuses.append(value?["mainService1"] as? String ?? "")
                 self.mainService1exists = true
+                self.totalNumberOfServices += 1
             }
             if(value?["mainService2"] != nil){
                 self.statuses.append(value?["mainService2"] as? String ?? "")
                 self.mainService2exists = true
+                self.totalNumberOfServices += 1
             }
             
             if(value?["mainService3"] != nil){
                 self.statuses.append(value?["mainService3"] as? String ?? "")
                 self.mainService3exists = true
+                self.totalNumberOfServices += 1
             }
             if(value?["mainService4"] != nil){
                 self.statuses.append(value?["mainService4"] as? String ?? "")
                 self.mainService4exists = true
+                self.totalNumberOfServices += 1
             }
             
             //get Main Service strings from Firebase
@@ -173,7 +197,7 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
             if value?["mainService4"] as? String == "yes"  { self.completionNumber += 1 }
             
             //set completion percet variable to percentage of statuses completed
-            let completionPercent =  (100 * self.completionNumber) / 16
+            let completionPercent =  (100 * self.completionNumber) / self.totalNumberOfServices
             
             //set percent label to completion percent
             self.percentLabel.text = "\(completionPercent)% complete"

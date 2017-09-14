@@ -9,6 +9,9 @@
 import UIKit
 import Firebase
 
+var currentBusinessColor = ""
+var currentBusinessLogo = ""
+
 open class CustomVehicleCell:  UITableViewCell {
     
     @IBOutlet weak var makeLabel: UILabel!
@@ -26,11 +29,16 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
     
     //variable for a collection of data from Firebase
     var vehicles = [DataSnapshot]()
+    var currentBusinessID = ""
+    var businesses = [DataSnapshot]()
+    
     
     //Setup Firebase reference variables
     let ref = Database.database().reference(withPath: "vehicles")
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var logoView: UIImageView!
+    @IBOutlet weak var backgroundImage: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +64,7 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
             //add vehicles to vehicles variable
             for item in snapshot.children{
                 let itemValue = (item as! DataSnapshot).value as? NSDictionary
+                self.currentBusinessID = itemValue?["business"] as? String ?? ""
                 if itemValue?["phone"] as? String ?? "" == currentPhone {
                     self.vehicles.append(item as! DataSnapshot)
                 }
@@ -64,6 +73,66 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
             
             //After 1 second, reload table view data
             self.delayWithSeconds(1){
+                
+                if self.currentBusinessID != "" {
+                    //Setup Firebase reference variables
+                    let ref = Database.database().reference(withPath: "businesses")
+                    // Listen for vehicles added to the Firebase database
+                    ref.observe(.value, with: { (snapshot) -> Void in
+                        
+                        self.businesses = []
+                        
+                        //add vehicles to vehicles variable
+                        for item in snapshot.children{
+                            self.businesses.append(item as! DataSnapshot)
+                        }
+                        
+                        self.delayWithSeconds(1){
+                            var itemNumber = 0
+                            for item in self.businesses {
+                                
+                                let value = item.value as? NSDictionary
+                                let id = value?["id"] as? String ?? ""
+                                if id == self.currentBusinessID {
+                                    currentBusinessColor = value?["color"] as? String ?? ""
+                                    currentBusinessLogo = value?["logo"] as? String ?? ""
+                                    
+                                    //Decode logo image from base64 string
+                                    let dataDecoded : Data = Data(base64Encoded: currentBusinessLogo, options: .ignoreUnknownCharacters)!
+                                    let decodedimage = UIImage(data: dataDecoded)
+                                    self.logoView.image = decodedimage
+                                    
+                                    if currentBusinessColor == "0" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundBlue")
+                                    } else if currentBusinessColor == "1" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundRed")
+                                    } else if currentBusinessColor == "2" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundGreen")
+                                    } else if currentBusinessColor == "3" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundYellow")
+                                    } else if currentBusinessColor == "4" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundCyan")
+                                    } else if currentBusinessColor == "5" {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundWhite")
+                                    } else {
+                                        self.backgroundImage.image = UIImage(named: "BackgroundBlue")
+                                    }
+                                    
+                                    return
+                                } else {
+                                    
+                                    itemNumber += 1
+                                    
+                                }
+                                
+                            }
+                        }
+                        
+                    })
+
+                }
+                
+                
                 self.tableView.reloadData()
             }
         })
