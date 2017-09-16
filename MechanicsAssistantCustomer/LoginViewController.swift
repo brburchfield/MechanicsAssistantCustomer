@@ -23,6 +23,7 @@ extension String {
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var phoneNumberField: UITextField!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //setup array for Firebase data
     var customers = [DataSnapshot]()
@@ -30,6 +31,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        activityIndicator.isHidden = true
         
         // Hide the navigation bar on the this view controller
         self.navigationController?.setNavigationBarHidden(true, animated: true)
@@ -42,7 +45,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         //Check for phone entry errors
         
         //First, remove all non-numeric characters
@@ -77,6 +81,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     
                     //...save ID to local storage, login.
                     currentPhone = phoneNumber
+                    self.activityIndicator.isHidden = true
+                    self.activityIndicator.stopAnimating()
                     self.performSegue(withIdentifier: "SuccessfulLogin", sender: sender)
                     shouldShowAlert = false
                     return
@@ -86,12 +92,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             //otherwise, display alert
             if shouldShowAlert == true {
+                
+                self.activityIndicator.isHidden = true
+                self.activityIndicator.stopAnimating()
                 self.displayAlert("No match", alertString: "There is no information matching the entered data.")
+                
             }
             
         })
         
         } else {
+            self.activityIndicator.isHidden = true
+            self.activityIndicator.stopAnimating()
             //Show phone number length alert
             displayAlert("Invalid Phone Number", alertString: "Please enter a valid, ten-digit phone number.")
         }

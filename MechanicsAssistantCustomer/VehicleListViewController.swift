@@ -39,10 +39,13 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var logoView: UIImageView!
     @IBOutlet weak var backgroundImage: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        
         
         // Hide the navigation bar on this view controller
         self.navigationController?.setNavigationBarHidden(true, animated: true)
@@ -57,8 +60,9 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
     
     override func viewDidAppear(_ animated: Bool) {
         // Listen for vehicles added to the Firebase database
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         ref.observe(.value, with: { (snapshot) -> Void in
-            
             self.vehicles = []
             
             //add vehicles to vehicles variable
@@ -132,7 +136,8 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
 
                 }
                 
-                
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
                 self.tableView.reloadData()
             }
         })

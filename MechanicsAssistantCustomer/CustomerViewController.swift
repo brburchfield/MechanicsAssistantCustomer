@@ -21,6 +21,7 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var completionImage: UIImageView!
     @IBOutlet weak var backgroundImage: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //set empty variables
     var airFilterStatus = ""
@@ -58,6 +59,7 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Do any additional setup after loading the view, typically from a nib.
         
         if currentBusinessColor == "0" {
@@ -171,6 +173,8 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
             })
             
             self.delayWithSeconds(1){
+                self.activityIndicator.isHidden = true
+                self.activityIndicator.stopAnimating()
                 self.tableView.reloadData()
             }
             
@@ -235,7 +239,11 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
             self.navigationController?.popViewController(animated: true)
         })
         
-        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
