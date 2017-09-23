@@ -68,8 +68,8 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
             //add vehicles to vehicles variable
             for item in snapshot.children{
                 let itemValue = (item as! DataSnapshot).value as? NSDictionary
-                self.currentBusinessID = itemValue?["business"] as? String ?? ""
                 if itemValue?["phone"] as? String ?? "" == currentPhone {
+                    self.currentBusinessID = itemValue?["business"] as? String ?? ""
                     self.vehicles.append(item as! DataSnapshot)
                 }
                 
@@ -133,7 +133,7 @@ class VehicleListViewController: UIViewController, UITableViewDataSource, UITabl
                         }
                         
                     })
-
+                    
                 }
                 
                 self.activityIndicator.stopAnimating()
