@@ -94,6 +94,7 @@ class CustomerViewController: UIViewController, UITableViewDataSource, UITableVi
             //delete statuses information and reset completion number (so that Firebase change doesn't append when data is changed)
             self.statuses = []
             self.completionNumber = 0
+            self.totalNumberOfServices = 15
             
             // Get user value
             let value = snapshot.value as? NSDictionary
